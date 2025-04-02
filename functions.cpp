@@ -171,6 +171,56 @@ vector<vector<double>>get_coeffs(int n, double a_prm, double b_prm, double(*F)(d
 	return res;
 }
 
+vector<vector<double>> get_coeffs2(int n, double a_prm, double b_prm, double(*F)(double, double(*)(double)), double(*f)(double))
+{
+	// Вычисляем граничные значения через F(x, f)
+	double mu1 = F(a_prm, f);
+	double mu2 = F(b_prm, f);
+
+	double h = (b_prm - a_prm) / n;
+	vector<double> func(n + 1);
+	vector<double> a(n);
+	vector<double> xs(n + 1);
+
+	// Заполняем узлы и значения функции F(x, f)
+	for (int i = 0; i < n; i++) {
+		xs[i] = a_prm + i * h;
+		func[i] = F(xs[i], f);  // Используем F(x, f) вместо F(x)
+		a[i] = func[i];
+	}
+
+	// Последний узел
+	func[n] = F(b_prm, f);
+	xs[n] = b_prm;
+
+	// Вычисляем коэффициенты c методом прогонки
+	vector<double> c(n);
+	c = sweepMethod(n, a_prm, b_prm, mu1, mu2, func);
+
+	// Вычисляем коэффициенты b
+	vector<double> b(n);
+	for (int i = 1; i < n; i++) {
+		b[i - 1] = (func[i] - func[i - 1]) / h + c[i] * h / 3. + c[i - 1] * h / 6.;
+	}
+
+	// Вычисляем коэффициенты d
+	vector<double> d(n);
+	for (int i = 1; i < n + 1; i++) {
+		d[i - 1] = (c[i] - c[i - 1]) / h;
+	}
+
+	// Собираем результат
+	vector<vector<double>> res;
+	res.push_back(xs);
+	res.push_back(func);
+	res.push_back(a);
+	res.push_back(b);
+	res.push_back(c);
+	res.push_back(d);
+
+	return res;
+}
+
 double getSValue(double x, vector<double>xs, vector<double> a, vector<double>b, vector<double>c, vector<double>d) {
 	int n = size(xs);
 	if (x<xs[0] || x>xs[n - 1]) {
@@ -306,3 +356,22 @@ double getFCFirstDerivatefunc2(double x, double(*f)(double)) {
 double getFCSecondDerivatefunc2(double x, double(*f)(double)) {
 	return f(x) - 10000 * cos(100 * x);
 }
+//добавляю свои функции, потому что не понимаю ошибки с f(x)+ осциллирующая функция
+double getF41(double x){return (log(x + 1)) / (x + 1) + cos(10*x);}
+double getF42(double x) {return (log(x + 1)) / (x + 1) + cos(100 * x);}
+double getF51(double x) { return (log(x + 1)) / (x)+cos(10 * x); }
+double getF52(double x){return (log(x+1))/(x)+cos(100*x);}
+double getF61(double x) {return (sin(x + 1)) / (x)+cos(10*x);}
+double getF62(double x){return (sin(x+1))/(x)+cos(100*x);}
+double getDerivateF41(double x){return (1 - log(x + 1)) / pow((x + 1), 2) - 10 * sin(10 * x);}
+double getDerivateF42(double x){return (1 - log(x + 1)) / pow((x + 1), 2) - 100 * sin(100 * x);}
+double getDerivateF51(double x){return (x + (-x - 1) * log(x + 1)) / (pow(x, 3) + pow(x, 2))- 10 * sin(10 * x);}
+double getDerivateF52(double x){return (x + (-x - 1) * log(x + 1)) / (pow(x, 3) + pow(x, 2))- 100 * sin(100 * x);}
+double getDerivateF61(double x){return (cos(x + 1) * x - sin(x + 1)) / (x * x)- 10 * sin(10 * x);}
+double getDerivateF62(double x){return (cos(x + 1) * x - sin(x + 1)) / (x * x)- 100 * sin(100 * x);}
+double getSecondDerivateF41(double x){return (2 * log(x + 1) - 3) / pow((x + 1), 3)- 100 * cos(10 * x);}
+double getSecondDerivateF42(double x){return (2 * log(x + 1) - 3) / pow((x + 1), 3)- 10000 * cos(100 * x);}
+double getSecondDerivateF51(double x){return (log(x + 1) * (2 * pow(x, 3) + 4 * pow(x, 2) + 2 * x) - 3 * pow(x, 3) - 2 * x * x) / pow((pow(x, 3) + pow(x, 2)), 2)- 100 * cos(10 * x);}
+double getSecondDerivateF52(double x){return (log(x + 1) * (2 * pow(x, 3) + 4 * pow(x, 2) + 2 * x) - 3 * pow(x, 3) - 2 * x * x) / pow((pow(x, 3) + pow(x, 2)), 2)- 10000 * cos(100 * x);}
+double getSecondDerivateF61(double x){return (sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 100 * cos(10 * x);}
+double getSecondDerivateF62(double x){return (sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 10000 * cos(100 * x);}

@@ -19,6 +19,7 @@ double a_prm, double b_prm - лева¤ и права¤ границы отре�
 double(*F)(double) - указатель на функцию, которую мы интерполируем сплайном
 возвращает в таком пор¤дке - {xs, fi, a, b, c, d} - векторы узлы, значение ф-ии в узлах, коэффициенты сплайна
 */
+vector<vector<double>> get_coeffs2(int n, double a_prm, double b_prm, double(*F)(double, double(*)(double)), double(*f)(double));
 
 vector<vector<double>> getSplainError(int N, double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate,
 	double(*F)(double), double(*F_firstDerivate)(double), double(*F_secondDerivate)(double),
@@ -27,9 +28,9 @@ vector<vector<double>> getSplainError(int N, double* maxDiff, double* maxDifffir
 возвращает таблички 2-3 дла пунктов а), б)
 int N - сетка размерности, кратной n,
 double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate - переменные,
-					в которые не¤вно возвращаетс¤ максимум разностей ф-ии и сплайна и их производных
+					в которые неявно возвращаетс¤ максимум разностей ф-ии и сплайна и их производных
 	double(*F)(double), double(*F_firstDerivate)(double), double(*F_secondDerivate)(double) - ф-ии и производные,
-																	дл¤ которых строилс¤ сплайн
+																	для которых строился сплайн
 	vector<double>xs - узлы разбиени¤,
 	vector<double> a, vector<double>b, vector<double>c, vector<double>d - коэффициенты сплайна
 */
@@ -38,7 +39,7 @@ vector<vector<double>> getSplainErrorForLastCase(int N, double* maxDiff, double*
 	double(*F)(double, double(*)(double)), double(*F_firstDerivate)(double, double(*)(double)), double(*F_secondDerivate)(double, double(*)(double)), double(*f)(double),
 	vector<double>xs, vector<double> a, vector<double>b, vector<double>c, vector<double>d);
 /*
-почто то же самое, что и дл¤ предыдущей функции, но добавл¤етс¤ параметр функции f(x)
+почти то же самое, что и для предыдущей функции, но добавляется параметр функции f(x)
 */
 
 double getFTest(double x);
@@ -146,3 +147,25 @@ double getSSecondDerivateValue(double x, vector<double>xs, vector<double>c, vect
 /*
 возвращает значение второй производной сплайна в точке х
 */
+
+//добавляю свои функции, потому что не понимаю ошибки с f(x)+ осциллирующая функция
+double getF41(double x); //(ln(x+1))/(x+1)+cos(10x)
+double getF42(double x);//(ln(x+1))/(x+1)+cos(100x)
+double getF51(double x);//(ln(x+1))/(x)+cos(10x)
+double getF52(double x);//(ln(x+1))/(x)+cos(100x)
+double getF61(double x);//(sin(x+1))/(x)+cos(10x)
+double getF62(double x);//(sin(x+1))/(x)+cos(100x)
+
+double getDerivateF41(double x); //(1 - log(x + 1)) / pow((x + 1), 2) - 10 * sin(10 * x)
+double getDerivateF42(double x);//(1 - log(x + 1)) / pow((x + 1), 2) - 100 * sin(100 * x)
+double getDerivateF51(double x);//(x + (-x - 1) * log(x + 1)) / (pow(x, 3) + pow(x, 2))- 10 * sin(10 * x)
+double getDerivateF52(double x);//(x + (-x - 1) * log(x + 1)) / (pow(x, 3) + pow(x, 2))- 100 * sin(100 * x)
+double getDerivateF61(double x);//(cos(x + 1) * x - sin(x + 1)) / (x * x)- 10 * sin(10 * x)
+double getDerivateF62(double x);//(cos(x + 1) * x - sin(x + 1)) / (x * x)- 100 * sin(100 * x)
+
+double getSecondDerivateF41(double x);// (2 * log(x + 1) - 3) / pow((x + 1), 3)- 100 * cos(10 * x)
+double getSecondDerivateF42(double x);//(2 * log(x + 1) - 3) / pow((x + 1), 3)- 10000 * cos(100 * x)
+double getSecondDerivateF51(double x);//(log(x + 1) * (2 * pow(x, 3) + 4 * pow(x, 2) + 2 * x) - 3 * pow(x, 3) - 2 * x * x) / pow((pow(x, 3) + pow(x, 2)), 2)- 100 * cos(10 * x)
+double getSecondDerivateF52(double x);//(log(x + 1) * (2 * pow(x, 3) + 4 * pow(x, 2) + 2 * x) - 3 * pow(x, 3) - 2 * x * x) / pow((pow(x, 3) + pow(x, 2)), 2)- 10000 * cos(100 * x)
+double getSecondDerivateF61(double x);//(sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 100 * cos(10 * x)
+double getSecondDerivateF62(double x);//(sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 10000 * cos(100 * x)
