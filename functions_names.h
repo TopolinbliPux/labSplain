@@ -11,15 +11,16 @@ vector<double> sweepMethod(int n, double a, double b, double mu1, double mu2, ve
 метод прогонки из прошлой лабы с измененным подсчетом коэффициентов
 */
 
-
-vector<vector<double>>get_coeffs(int n, double a_prm, double b_prm, double(*F)(double));
+//исходная
+vector<vector<double>>get_coeffs(int n, double a_prm, double b_prm, double(*F)(double), double mu1, double mu2);
 /*
 подсчет коэффициентов сплайна на сетке размерности n,
 double a_prm, double b_prm - лева¤ и права¤ границы отрезка
 double(*F)(double) - указатель на функцию, которую мы интерполируем сплайном
 возвращает в таком пор¤дке - {xs, fi, a, b, c, d} - векторы узлы, значение ф-ии в узлах, коэффициенты сплайна
 */
-vector<vector<double>> get_coeffs2(int n, double a_prm, double b_prm, double(*F)(double, double(*)(double)), double(*f)(double));
+//переделанная
+//vector<vector<double>>get_coeffs(int n, double a_prm, double b_prm, double(*F)(double));
 
 vector<vector<double>> getSplainError(int N, double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate,
 	double(*F)(double), double(*F_firstDerivate)(double), double(*F_secondDerivate)(double),
@@ -35,9 +36,9 @@ double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate - �
 	vector<double> a, vector<double>b, vector<double>c, vector<double>d - коэффициенты сплайна
 */
 
-vector<vector<double>> getSplainErrorForLastCase(int N, double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate,
-	double(*F)(double, double(*)(double)), double(*F_firstDerivate)(double, double(*)(double)), double(*F_secondDerivate)(double, double(*)(double)), double(*f)(double),
-	vector<double>xs, vector<double> a, vector<double>b, vector<double>c, vector<double>d);
+//vector<vector<double>> getSplainErrorForLastCase(int N, double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate,
+//	double(*F)(double, double(*)(double)), double(*F_firstDerivate)(double, double(*)(double)), double(*F_secondDerivate)(double, double(*)(double)), double(*f)(double),
+//	vector<double>xs, vector<double> a, vector<double>b, vector<double>c, vector<double>d);
 /*
 почти то же самое, что и для предыдущей функции, но добавляется параметр функции f(x)
 */
@@ -169,3 +170,27 @@ double getSecondDerivateF51(double x);//(log(x + 1) * (2 * pow(x, 3) + 4 * pow(x
 double getSecondDerivateF52(double x);//(log(x + 1) * (2 * pow(x, 3) + 4 * pow(x, 2) + 2 * x) - 3 * pow(x, 3) - 2 * x * x) / pow((pow(x, 3) + pow(x, 2)), 2)- 10000 * cos(100 * x)
 double getSecondDerivateF61(double x);//(sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 100 * cos(10 * x)
 double getSecondDerivateF62(double x);//(sin(x + 1) * (2 - x * x) - 2 * x * cos(x + 1)) / (pow(x, 3))- 10000 * cos(100 * x)
+
+double Osc1(double x);//cos(10*x)
+double OscDerivate1(double x);//-10*sin(10*x)
+double OscSecondDerivate1(double x);//-100*cos(10*x)
+
+double Osc2(double x);//cos(100*x)
+double OscDerivate2(double x);//-100*sin(100*x)
+double OscSecondDerivate2(double x);//-10000*cos(100*x)
+
+vector<vector<double>> getSplainErrorWithOsc(int N, double* maxDiff, double* maxDifffirstDerivate, double* maxDiffsecondDerivate,
+	double(*F)(double), double(*F_firstDerivate)(double), double(*F_secondDerivate)(double),
+	double(*Osc)(double), double(*OscFirstDeriv)(double), double(*OscSecondDeriv)(double),
+	vector<double>xs, vector<double> a, vector<double>b, vector<double>c, vector<double>d);
+
+//переделанная
+//vector<double> sweepMethod(int n, double a, double b,
+//	const std::vector<double>& f_values,
+//	double mu1, double mu2,
+//	double (*FSecondDerivate)(double));
+
+//переделанная
+//vector<vector<double>> get_coeffs(int n, double a_prm, double b_prm,
+//	double (*F)(double),
+//	double (*FSecondDerivate)(double));
